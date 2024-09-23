@@ -35,15 +35,44 @@ Ball.prototype.draw = function() {
   ctx.closePath();
 };
 
-Ball.prototype.update = function() {
+Ball.prototype.update = function(balls) {
+  // 碰撞检测
+  for (var j = 0; j < balls.length; j++) {
+    if (!(this === balls[j])) {
+      var dx = this.x - balls[j].x;
+      var dy = this.y - balls[j].y;
+      var distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < this.radius + balls[j].radius) {
+        // 碰撞后改变颜色
+        this.color = randomColor();
+        balls[j].color = randomColor();
+
+        // 碰撞响应
+        var angle = Math.atan2(dy, dx);
+        var targetX = this.x + Math.cos(angle) * (this.radius + balls[j].radius);
+        var targetY = this.y + Math.sin(angle) * (this.radius + balls[j].radius);
+        var ax = (targetX - balls[j].x) * 0.05;
+        var ay = (targetY - balls[j].y) * 0.05;
+        this.dx -= ax;
+        this.dy -= ay;
+        balls[j].dx += ax;
+        balls[j].dy += ay;
+      }
+    }
+  }
+
+  // 边界检测
   if (this.x + this.radius > canvas.width || this.x - this.radius < 0) {
     this.dx = -this.dx;
-    this.color = randomColor(); // 碰撞后改变颜色
+    this.color = randomColor();
   }
   if (this.y + this.radius > canvas.height || this.y - this.radius < 0) {
     this.dy = -this.dy;
-    this.color = randomColor(); // 碰撞后改变颜色
+    this.color = randomColor();
   }
+
+  // 更新位置
   this.x += this.dx;
   this.y += this.dy;
   this.draw();
@@ -59,14 +88,22 @@ function randomColor() {
   return color;
 }
 
-// 创建小球实例
-var ball = new Ball(canvas.width / 2, canvas.height / 2, 30, randomColor());
+// 创建多个小球
+var balls = [];
+for (var i = 0; i < 20; i++) {
+  var radius = 20;
+  var x = Math.random() * (canvas.width - radius * 2) + radius;
+  var y = Math.random() * (canvas.height - radius * 2) + radius;
+  balls.push(new Ball(x, y, radius, randomColor()));
+}
 
 // 动画循环
 function animate() {
   requestAnimationFrame(animate);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ball.update();
+  balls.forEach(function(ball) {
+    ball.update(balls);
+  });
 }
 
 animate();
