@@ -1,33 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>syx's homework</title>
+<title>syx'swork</title>
 <style>
-  body, html {
-    height: 100%;
-    margin: 0;
-    overflow: hidden;
-    background-color: black;
-  }
-  .container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
-  .star {
-    position: absolute;
-    border-radius: 50%;
-    background-color: white;
-    opacity: 0.7;
+  canvas {
+    border: 1px solid black;
   }
 </style>
 </head>
 <body>
-<div class="container">
-  <!-- Stars will be added here by JavaScript -->
-</div>
-<script src="script.js"></script>
+<canvas id="canvas"></canvas>
+<script>
+// 获取Canvas元素并设置其大小
+var canvas = document.getElementById('canvas');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+var ctx = canvas.getContext('2d');
+
+// 小球对象
+function Ball(x, y, radius, color) {
+  this.x = x;
+  this.y = y;
+  this.radius = radius;
+  this.color = color;
+  this.dx = Math.random() * 4 - 2; // 随机速度
+  this.dy = Math.random() * 4 - 2;
+}
+
+Ball.prototype.draw = function() {
+  ctx.beginPath();
+  ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+  ctx.fillStyle = this.color;
+  ctx.fill();
+  ctx.closePath();
+};
+
+Ball.prototype.update = function() {
+  if (this.x + this.radius > canvas.width || this.x - this.radius < 0) {
+    this.dx = -this.dx;
+    this.color = randomColor(); // 碰撞后改变颜色
+  }
+  if (this.y + this.radius > canvas.height || this.y - this.radius < 0) {
+    this.dy = -this.dy;
+    this.color = randomColor(); // 碰撞后改变颜色
+  }
+  this.x += this.dx;
+  this.y += this.dy;
+  this.draw();
+};
+
+// 生成随机颜色
+function randomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+// 创建小球实例
+var ball = new Ball(canvas.width / 2, canvas.height / 2, 30, randomColor());
+
+// 动画循环
+function animate() {
+  requestAnimationFrame(animate);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ball.update();
+}
+
+animate();
+</script>
 </body>
 </html>
