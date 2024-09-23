@@ -3,15 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>宋玥汐的第三个作业</title>
+<title>Collision Animation</title>
 <style>
-  /* CSS样式将在下面定义 */
+  body, html {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background-color: black;
+  }
+  .container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background-color: white;
+    opacity: 0.7;
+  }
 </style>
 </head>
 <body>
-<div id="container"></div>
-<script>
-  // JavaScript代码将在下面定义
-</script>
+<div class="container">
+  <!-- Stars will be added here by JavaScript -->
+</div>
+<script src="script.js"></script>
 </body>
 </html>
